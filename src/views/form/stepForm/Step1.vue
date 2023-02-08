@@ -27,7 +27,7 @@
           </a-select>
           <a-input
             :style="{width: 'calc(100% - 100px)'}"
-            v-decorator="['payType', { initialValue: 'test@example.com', rules: [{required: true, message: '收款账户必须填写'}]}]"
+            v-decorator="['payType', { initialValue: 'integration_test@example.com', rules: [{required: true, message: '收款账户必须填写'}]}]"
           />
         </a-input-group>
       </a-form-item>

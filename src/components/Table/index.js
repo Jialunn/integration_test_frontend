@@ -72,7 +72,7 @@ export default {
      * e.g:
      * /users/1
      * /users/2
-     * /users/3?queryParam=test
+     * /users/3?queryParam=integration_test
      * ...
      */
     pageURI: {
