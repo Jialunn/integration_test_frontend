@@ -36,5 +36,7 @@ export default {
     'menu.account.settings': 'Account Settings',
     'menu.account.trigger': 'Trigger Error',
     'menu.account.logout': 'Logout',
-    'menu.integration_test': 'Integration Test'
+    'menu.integration_test': 'Integration Test',
+    'menu.benchmark_test': 'Benchmark Test',
+    'menu.compatible_test': 'Compatible Test'
 }

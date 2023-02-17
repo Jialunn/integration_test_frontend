@@ -36,5 +36,7 @@ export default {
     'menu.account.settings': '个人设置',
     'menu.account.trigger': '触发报错',
     'menu.account.logout': '退出登录',
-    'menu.integration_test': '集成测试'
+    'menu.integration_test': '集成测试',
+    'menu.benchmark_test': 'Benchmark测试',
+    'menu.compatible_test': '兼容性测试'
 }
