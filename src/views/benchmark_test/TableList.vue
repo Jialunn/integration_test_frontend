@@ -86,7 +86,7 @@
         :rowSelection="rowSelection"
         showPagination="auto"
       >
-        <span slot="serial" slot-scope="text, record, index">
+        <!-- <span slot="serial" slot-scope="text, record, index">
           {{ index + 1 }}
         </span>
         <span slot="status" slot-scope="text">
@@ -94,15 +94,15 @@
         </span>
         <span slot="description" slot-scope="text">
           <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
-        </span>
+        </span> -->
 
-        <span slot="action" slot-scope="text, record">
+        <!-- <span slot="action" slot-scope="text, record">
           <template>
             <a @click="handleEdit(record)">配置</a>
             <a-divider type="vertical" />
             <a @click="handleSub(record)">订阅报警</a>
           </template>
-        </span>
+        </span> -->
       </s-table>
 
       <create-form

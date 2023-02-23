@@ -1,5 +1,6 @@
 <template>
-  <div :class="wrpCls">
+  <!-- <div :class="wrpCls"> -->
+  <div :class="wrpCls" v-if="false">
     <avatar-dropdown :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
     <select-lang :class="prefixCls" />
   </div>

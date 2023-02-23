@@ -29,35 +29,14 @@
         <a-input-search style="margin-left: 16px; width: 272px;" />
       </div>
 
-      <s-table
-          ref="table"
-          size="default"
-          rowKey="key"
-          :columns="columns"
-          :data="loadData"
-          :alert="true"
-          :rowSelection="rowSelection"
-          showPagination="auto"
-        >
-          <span slot="serial" slot-scope="text, record, index">
-            {{ index + 1 }}
-          </span>
-          <span slot="status" slot-scope="text">
-            <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
-          </span>
-          <span slot="description" slot-scope="text">
-            <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
-          </span>
-
-          <span slot="action" slot-scope="text, record">
-            <template>
-              <a @click="handleEdit(record)">配置</a>
-              <a-divider type="vertical" />
-              <a @click="handleSub(record)">订阅报警</a>
-            </template>
-          </span>
-
-        </s-table>
+      <a-table
+        ref="table"
+        size="default"
+        rowKey="key"
+        :columns="columns"
+        :data-source="dataSource"
+        showPagination="auto"
+      ></a-table>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -81,44 +60,76 @@ data.push({
   }
 })
 
-const columns = [
+const dataSource = [
   {
-    title: '#',
-    scopedSlots: { customRender: 'serial' }
+    key: '1',
+    name: '胡彦斌',
+    age: 32,
+    address: '西湖区湖底公园1号'
   },
   {
-    title: '规则编号',
-    dataIndex: 'no'
-  },
-  {
-    title: '描述',
-    dataIndex: 'description',
-    scopedSlots: { customRender: 'description' }
-  },
-  {
-    title: '服务调用次数',
-    dataIndex: 'callNo',
-    sorter: true,
-    needTotal: true,
-    customRender: (text) => text + ' 次'
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    scopedSlots: { customRender: 'status' }
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
-    sorter: true
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    width: '150px',
-    scopedSlots: { customRender: 'action' }
+    key: '2',
+    name: '吴彦祖',
+    age: 42,
+    address: '西湖区湖底公园1号'
   }
 ]
+
+const columns = [
+  {
+    title: '姓名',
+    dataIndex: 'name',
+    key: 'name'
+  },
+  {
+    title: '年龄',
+    dataIndex: 'age',
+    key: 'age'
+  },
+  {
+    title: '住址',
+    dataIndex: 'address',
+    key: 'address'
+  }
+]
+
+// const columns2 = [
+//   {
+//     title: 'repo',
+//     dataIndex: 'repo',
+//     key: 'repo'
+//   },
+//   {
+//     title: 'branch',
+//     dataIndex: 'branch',
+//     key: 'branch'
+//   },
+//   {
+//     title: 'case',
+//     dataIndex: 'case',
+//     key: 'case'
+//   },
+//   {
+//     title: '测试版本',
+//     dataIndex: 'version',
+//     key: 'version'
+//   },
+//   {
+//     title: '测试时间',
+//     dataIndex: 'test_version',
+//     key: 'test_version'
+//   },
+//   {
+//     title: '测试状态',
+//     dataIndex: 'success',
+//     key: 'success'
+//   },
+//   {
+//     title: '测试结果',
+//     dataIndex: 'results',
+//     key: 'results'
+//   }
+// ]
 
 export default {
   name: 'StandardList',
@@ -139,7 +150,8 @@ export default {
       },
       barTitle: [],
       chartData: [],
-      status: 'all'
+      status: 'all',
+      dataSource
     }
   },
   created () {
