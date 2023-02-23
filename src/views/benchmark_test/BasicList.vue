@@ -1,6 +1,6 @@
 <template>
   <page-header-wrapper>
-    <a-card :bordered="false">
+    <!-- <a-card :bordered="false">
       <a-row>
         <a-col :sm="8" :xs="24">
           <info title="我的待办" value="8个任务" :bordered="true" />
@@ -12,59 +12,52 @@
           <info title="本周完成任务数" value="24个" />
         </a-col>
       </a-row>
-    </a-card>
+    </a-card> -->
+
+    <div v-for="(title, index) in barTitle" :key="index">
+      <a-card style="margin-top: 24px" :bordered="false">
+        <bar :data="metrics[index]" :title="title" />
+      </a-card>
+    </div>
 
     <a-card
       style="margin-top: 24px"
       :bordered="false"
-      title="标准列表">
+      title="历史数据">
 
       <div slot="extra">
-        <a-radio-group v-model="status">
-          <a-radio-button value="all">全部</a-radio-button>
-          <a-radio-button value="processing">进行中</a-radio-button>
-          <a-radio-button value="waiting">等待中</a-radio-button>
-        </a-radio-group>
         <a-input-search style="margin-left: 16px; width: 272px;" />
       </div>
 
-      <div class="operate">
-        <a-button type="dashed" style="width: 100%" icon="plus" @click="add">添加</a-button>
-      </div>
+      <s-table
+          ref="table"
+          size="default"
+          rowKey="key"
+          :columns="columns"
+          :data="loadData"
+          :alert="true"
+          :rowSelection="rowSelection"
+          showPagination="auto"
+        >
+          <span slot="serial" slot-scope="text, record, index">
+            {{ index + 1 }}
+          </span>
+          <span slot="status" slot-scope="text">
+            <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
+          </span>
+          <span slot="description" slot-scope="text">
+            <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
+          </span>
 
-      <a-list size="large" :pagination="{showSizeChanger: true, showQuickJumper: true, pageSize: 5, total: 50}">
-        <a-list-item :key="index" v-for="(item, index) in data">
-          <a-list-item-meta :description="item.description">
-            <a-avatar slot="avatar" size="large" shape="square" :src="item.avatar"/>
-            <a slot="title">{{ item.title }}</a>
-          </a-list-item-meta>
-          <div slot="actions">
-            <a @click="edit(item)">编辑</a>
-          </div>
-          <div slot="actions">
-            <a-dropdown>
-              <a-menu slot="overlay">
-                <a-menu-item><a>编辑</a></a-menu-item>
-                <a-menu-item><a>删除</a></a-menu-item>
-              </a-menu>
-              <a>更多<a-icon type="down"/></a>
-            </a-dropdown>
-          </div>
-          <div class="list-content">
-            <div class="list-content-item">
-              <span>Owner</span>
-              <p>{{ item.owner }}</p>
-            </div>
-            <div class="list-content-item">
-              <span>开始时间</span>
-              <p>{{ item.startAt }}</p>
-            </div>
-            <div class="list-content-item">
-              <a-progress :percent="item.progress.value" :status="!item.progress.status ? null : item.progress.status" style="width: 180px" />
-            </div>
-          </div>
-        </a-list-item>
-      </a-list>
+          <span slot="action" slot-scope="text, record">
+            <template>
+              <a @click="handleEdit(record)">配置</a>
+              <a-divider type="vertical" />
+              <a @click="handleSub(record)">订阅报警</a>
+            </template>
+          </span>
+
+        </s-table>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -73,6 +66,8 @@
 // 演示如何使用 this.$dialog 封装 modal 组件
 import TaskForm from './modules/TaskForm'
 import Info from './components/Info'
+import { axios } from '@/utils/request'
+import { Bar } from '@/components'
 
 const data = []
 data.push({
@@ -86,17 +81,69 @@ data.push({
   }
 })
 
+const columns = [
+  {
+    title: '#',
+    scopedSlots: { customRender: 'serial' }
+  },
+  {
+    title: '规则编号',
+    dataIndex: 'no'
+  },
+  {
+    title: '描述',
+    dataIndex: 'description',
+    scopedSlots: { customRender: 'description' }
+  },
+  {
+    title: '服务调用次数',
+    dataIndex: 'callNo',
+    sorter: true,
+    needTotal: true,
+    customRender: (text) => text + ' 次'
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    scopedSlots: { customRender: 'status' }
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updatedAt',
+    sorter: true
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    width: '150px',
+    scopedSlots: { customRender: 'action' }
+  }
+]
+
 export default {
   name: 'StandardList',
   components: {
     TaskForm,
-    Info
+    Info,
+    Bar
   },
   data () {
     return {
       data,
+      columns,
+      model_data: {
+        'test_type': 'test',
+        'page': '0',
+        'repo': 'mmdetection',
+        'config': 'configs/atss/atss_r50_fpn_1x_coco.py'
+      },
+      barTitle: [],
+      chartData: [],
       status: 'all'
     }
+  },
+  created () {
+    this.loadChartData()
   },
   methods: {
     add () {
@@ -149,6 +196,41 @@ export default {
           centered: true,
           maskClosable: false
         })
+    },
+    loadChartData () {
+      axios.post('http://10.1.52.78:5158/benchmark_test/get_model_history', this.model_data)
+      .then((res) => {
+        let head = ''
+        // eslint-disable-next-line
+        let title = []
+        // eslint-disable-next-line
+        let metrics = []
+        const d = res.data
+        for (const i in d) {
+          if (head === '') {
+            head = d[i].case
+          }
+          Object.keys(d[i].results.metrics).forEach((key) => {
+            if (key !== 'err') {
+              const name = head + ' : ' + key
+              if (title.indexOf(name) === -1) {
+                title.push(name)
+                metrics.push([])
+              }
+              const index = title.indexOf(name)
+              metrics[index].push({
+                x: d[i].branch + ';' + d[i].test_version,
+                y: d[i].results.metrics[key]
+              })
+            }
+          })
+        }
+        this.barTitle = title
+        this.metrics = metrics
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     }
   }
 }

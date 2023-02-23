@@ -46,15 +46,14 @@ export const asyncRouterMap = [
         meta: { title: 'menu.integration_test', icon: 'table', permission: ['table'] },
         children: [
           {
-            path: '/integration_test/table-list/:pageNo([1-9]\\d*)?',
-            name: 'TableListWrapper',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            path: '/integration_test/table-list',
+            name: 'TableLrristWrapper',
             component: () => import('@/views/integration_test/TableList'),
             meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
           },
           {
             path: '/integration_test/basic-list',
-            name: 'BasicList',
+            name: 'BasicList2222',
             component: () => import('@/views/integration_test/BasicList'),
             meta: { title: 'menu.list.basic-list', keepAlive: true, permission: ['table'] }
           }
@@ -69,15 +68,14 @@ export const asyncRouterMap = [
         meta: { title: 'menu.benchmark_test', icon: 'table', permission: ['table'] },
         children: [
           {
-            path: '/benchmark_test/table-list/:pageNo([1-9]\\d*)?',
-            name: 'TableListWrapper',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            path: '/benchmark_test/table-list',
+            name: 'Tab22leListWrapper',
             component: () => import('@/views/benchmark_test/TableList'),
             meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
           },
           {
             path: '/benchmark_test/basic-list',
-            name: 'BasicList',
+            name: 'BaswwicList',
             component: () => import('@/views/benchmark_test/BasicList'),
             meta: { title: 'menu.list.basic-list', keepAlive: true, permission: ['table'] }
           }
@@ -92,15 +90,14 @@ export const asyncRouterMap = [
         meta: { title: 'menu.compatible_test', icon: 'table', permission: ['table'] },
         children: [
           {
-            path: '/compatible_test/table-list/:pageNo([1-9]\\d*)?',
-            name: 'TableListWrapper',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            path: '/compatible_test/table-list',
+            name: 'TwwableListWrapper',
             component: () => import('@/views/compatible_test/TableList'),
             meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
           },
           {
             path: '/compatible_test/basic-list',
-            name: 'BasicList',
+            name: 'Basi55cList',
             component: () => import('@/views/compatible_test/BasicList'),
             meta: { title: 'menu.list.basic-list', keepAlive: true, permission: ['table'] }
           }
