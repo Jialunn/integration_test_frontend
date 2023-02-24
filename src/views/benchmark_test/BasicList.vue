@@ -23,19 +23,27 @@
     <a-card
       style="margin-top: 24px"
       :bordered="false"
-      title="历史数据">
+      title="历史数据(500条)">
 
       <div slot="extra">
+        <a-radio-group v-model="status" @change="successFilter(status)">
+          <a-radio-button value="all">全部</a-radio-button>
+          <a-radio-button value="success">成功</a-radio-button>
+          <a-radio-button value="fail">失败</a-radio-button>
+        </a-radio-group>
         <a-input-search style="margin-left: 16px; width: 272px;" />
       </div>
-
+      <!-- <div slot="extra">
+        <a-input-search style="margin-left: 16px; width: 272px;" />
+      </div> -->
       <a-table
         ref="table"
         size="default"
         rowKey="key"
         :columns="columns"
-        :data-source="dataSource"
-        showPagination="auto"
+        :data-source="chartData"
+        :pagenation="false"
+        showPagination="false"
       ></a-table>
     </a-card>
   </page-header-wrapper>
@@ -48,88 +56,43 @@ import Info from './components/Info'
 import { axios } from '@/utils/request'
 import { Bar } from '@/components'
 
-const data = []
-data.push({
-  title: 'Alipay',
-  avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-  description: '那是一种内在的东西， 他们到达不了，也无法触及的',
-  owner: '付晓晓',
-  startAt: '2018-07-26 22:44',
-  progress: {
-    value: 90
-  }
-})
-
-const dataSource = [
-  {
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号'
-  },
-  {
-    key: '2',
-    name: '吴彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号'
-  }
-]
-
 const columns = [
   {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name'
+    title: 'repo',
+    dataIndex: 'repo',
+    key: 'repo'
   },
   {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age'
+    title: 'branch',
+    dataIndex: 'branch',
+    key: 'branch'
   },
   {
-    title: '住址',
-    dataIndex: 'address',
-    key: 'address'
+    title: 'case',
+    dataIndex: 'case',
+    key: 'case'
+  },
+  {
+    title: '测试版本',
+    dataIndex: 'test_version',
+    key: 'test_version'
+  },
+  {
+    title: '测试时间',
+    dataIndex: 'test_started_time',
+    key: 'test_started_time'
+  },
+  {
+    title: '测试状态',
+    dataIndex: 'success',
+    key: 'success'
+  },
+  {
+    title: '测试结果',
+    dataIndex: 'results',
+    key: 'results'
   }
 ]
-
-// const columns2 = [
-//   {
-//     title: 'repo',
-//     dataIndex: 'repo',
-//     key: 'repo'
-//   },
-//   {
-//     title: 'branch',
-//     dataIndex: 'branch',
-//     key: 'branch'
-//   },
-//   {
-//     title: 'case',
-//     dataIndex: 'case',
-//     key: 'case'
-//   },
-//   {
-//     title: '测试版本',
-//     dataIndex: 'version',
-//     key: 'version'
-//   },
-//   {
-//     title: '测试时间',
-//     dataIndex: 'test_version',
-//     key: 'test_version'
-//   },
-//   {
-//     title: '测试状态',
-//     dataIndex: 'success',
-//     key: 'success'
-//   },
-//   {
-//     title: '测试结果',
-//     dataIndex: 'results',
-//     key: 'results'
-//   }
-// ]
 
 export default {
   name: 'StandardList',
@@ -140,18 +103,19 @@ export default {
   },
   data () {
     return {
-      data,
       columns,
-      model_data: {
-        'test_type': 'test',
-        'page': '0',
-        'repo': 'mmdetection',
-        'config': 'configs/atss/atss_r50_fpn_1x_coco.py'
+      pagenation: {
+        position: 'top',
+        pageSize: 5,
+        total: 10,
+        pageSizeOptions: ['5', '10', '20'],
+        defaultCurrent: 1,
+        defaultPageSize: 5
       },
       barTitle: [],
       chartData: [],
-      status: 'all',
-      dataSource
+      metrics: [],
+      status: 'all'
     }
   },
   created () {
@@ -209,14 +173,24 @@ export default {
           maskClosable: false
         })
     },
-    loadChartData () {
-      axios.post('http://10.1.52.78:5158/benchmark_test/get_model_history', this.model_data)
+    loadChartData (success = undefined, page_size = '500', page = '1', test_type = 'test', repo = 'mmdetection', config = 'configs/atss/atss_r50_fpn_1x_coco.py') {
+      const modelData = {
+        'test_type': test_type,
+        'page_size': page_size,
+        'page': page,
+        'repo': repo,
+        'config': config,
+        'success': success
+      }
+      axios.post('http://10.1.52.78:5158/benchmark_test/get_model_history', modelData)
       .then((res) => {
         let head = ''
         // eslint-disable-next-line
         let title = []
         // eslint-disable-next-line
         let metrics = []
+        // eslint-disable-next-line
+        let chartData = []
         const d = res.data
         for (const i in d) {
           if (head === '') {
@@ -224,7 +198,11 @@ export default {
           }
           Object.keys(d[i].results.metrics).forEach((key) => {
             if (key !== 'err') {
-              const name = head + ' : ' + key
+              let __key = key
+              if (key.indexOf('/') !== -1) {
+                __key = key.split('/')[1]
+              }
+              const name = head + ' : ' + __key
               if (title.indexOf(name) === -1) {
                 title.push(name)
                 metrics.push([])
@@ -236,13 +214,39 @@ export default {
               })
             }
           })
+          // 加载表格数据 OHHHHHHHHHH
+          d[i].results = JSON.stringify(d[i].results)
+          d[i].success = JSON.stringify(d[i].success)
+          const date = new Date(d[i].test_started_time * 1000)
+          const dateString = String(date.getFullYear()) + '_' +
+                       String(date.getMonth() + 1) + '_' +
+                       String(date.getDate())
+          d[i].test_started_time = dateString
+          d[i].key = i
+          chartData.push(d[i])
         }
         this.barTitle = title
         this.metrics = metrics
+        this.chartData = chartData
+        this.pagenation.total = Math.ceil(res.pageNum / res.pageSize)
       })
       .catch((error) => {
         console.log(error)
       })
+    },
+    pageChange () {
+      this.loadChartData()
+    },
+    successFilter (e) {
+      if (e === 'all') {
+        this.loadChartData()
+      }
+      if (e === 'success') {
+        this.loadChartData(true)
+      }
+      if (e === 'fail') {
+        this.loadChartData(false)
+      }
     }
   }
 }
