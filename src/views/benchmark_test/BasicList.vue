@@ -37,14 +37,11 @@
         <a-input-search style="margin-left: 16px; width: 272px;" />
       </div> -->
       <a-table
-        ref="table"
-        size="default"
         rowKey="key"
         :columns="columns"
         :data-source="chartData"
-        :pagenation="false"
-        showPagination="false"
-      ></a-table>
+      >
+      </a-table>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -104,7 +101,8 @@ export default {
   data () {
     return {
       columns,
-      pagenation: {
+      pagenation: false,
+      pagenation1: {
         position: 'top',
         pageSize: 5,
         total: 10,
@@ -228,7 +226,7 @@ export default {
         this.barTitle = title
         this.metrics = metrics
         this.chartData = chartData
-        this.pagenation.total = Math.ceil(res.pageNum / res.pageSize)
+        // this.pagenation.total = Math.ceil(res.pageNum / res.pageSize)
       })
       .catch((error) => {
         console.log(error)
