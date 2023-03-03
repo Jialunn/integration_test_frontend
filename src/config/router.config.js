@@ -13,97 +13,52 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: 'menu.home' },
-    redirect: '/dashboard/workplace',
+    redirect: '/dashboard/analysis',
     children: [
       // dashboard
       {
         path: '/dashboard',
         name: 'dashboard',
-        redirect: '/dashboard/workplace',
-        component: RouteView,
-        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
+        redirect: '/dashboard/analysis',
+        component: () => import('@/views/dashboard/Analysis'),
+        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
-            path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
+            path: '/dashboard/analysis',
             name: 'Analysis',
             component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: 'menu.dashboard.analysis', keepAlive: false, permission: ['dashboard'] }
-          },
-          {
-            path: '/dashboard/workplace',
-            name: 'Workplace',
-            component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: ['dashboard'] }
+            meta: { title: 'menu.dashboard.analysis', keepAlive: false }
           }
         ]
       },
-      // // integration_test
-      // {
-      //   path: '/integration_test',
-      //   name: 'integration_test',
-      //   component: RouteView,
-      //   redirect: '/integration_test/table-list',
-      //   meta: { title: 'menu.integration_test', icon: 'table', permission: ['table'] },
-      //   children: [
-      //     {
-      //       path: '/integration_test/table-list',
-      //       name: 'TableLrristWrapper',
-      //       component: () => import('@/views/integration_test/TableList'),
-      //       meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
-      //     },
-      //     {
-      //       path: '/integration_test/basic-list',
-      //       name: 'BasicList2222',
-      //       component: () => import('@/views/integration_test/BasicList'),
-      //       meta: { title: 'menu.list.basic-list', keepAlive: true, permission: ['table'] }
-      //     }
-      //   ]
-      // },
       // benchmark_test
       {
         path: '/benchmark_test',
         name: 'benchmark_test',
         component: RouteView,
         redirect: '/benchmark_test/table-list',
-        meta: { title: 'menu.benchmark_test', icon: 'table', permission: ['table'] },
+        meta: { title: 'menu.benchmark_test', icon: 'table' },
         children: [
           {
             path: '/benchmark_test/table-list',
-            name: 'Tab22leListWrapper',
+            name: 'BenchmarkTableListWrapper',
             component: () => import('@/views/benchmark_test/TableList'),
-            meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
+            meta: { title: 'menu.list.table-list', keepAlive: true }
           },
           {
-            path: '/benchmark_test/basic-list',
-            name: 'BaswwicList',
+            path: '/benchmark_test/model-test-list',
+            name: 'ModelTestList',
             component: () => import('@/views/benchmark_test/BasicList'),
-            meta: { title: 'menu.list.basic-list', keepAlive: true, permission: ['table'] }
+            meta: { title: 'menu.list.basic-list', keepAlive: true }
+          },
+          {
+            path: '/benchmark_test/test-list',
+            name: 'BenchmarktestBasicList',
+            component: () => import('@/views/benchmark_test/Test'),
+            meta: { title: 'test', keepAlive: true }
           }
         ]
       }
-      // },
-      // // compatible_test
-      // {
-      //   path: '/compatible_test',
-      //   name: 'compatible_test',
-      //   component: RouteView,
-      //   redirect: '/compatible_test/table-list',
-      //   meta: { title: 'menu.compatible_test', icon: 'table', permission: ['table'] },
-      //   children: [
-      //     {
-      //       path: '/compatible_test/table-list',
-      //       name: 'TwwableListWrapper',
-      //       component: () => import('@/views/compatible_test/TableList'),
-      //       meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
-      //     },
-      //     {
-      //       path: '/compatible_test/basic-list',
-      //       name: 'Basi55cList',
-      //       component: () => import('@/views/compatible_test/BasicList'),
-      //       meta: { title: 'menu.list.basic-list', keepAlive: true, permission: ['table'] }
-      //     }
-      //   ]
-      // }
     ]
   },
   {
@@ -118,35 +73,6 @@ export const asyncRouterMap = [
  * @type { *[] }
  */
 export const constantRouterMap = [
-  {
-    path: '/user',
-    component: UserLayout,
-    redirect: '/user/login',
-    hidden: true,
-    children: [
-      {
-        path: 'login',
-        name: 'login',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
-      },
-      {
-        path: 'register',
-        name: 'register',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Register')
-      },
-      {
-        path: 'register-result',
-        name: 'registerResult',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult')
-      },
-      {
-        path: 'recover',
-        name: 'recover',
-        component: undefined
-      }
-    ]
-  },
-
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')

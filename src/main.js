@@ -9,6 +9,7 @@ import store from './store/'
 import i18n from './locales'
 import { VueAxios } from './utils/request'
 import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
+import { pagination } from 'ant-design-vue'
 import themePluginConfig from '../config/themePluginConfig'
 
 // mock
@@ -29,6 +30,7 @@ Vue.use(VueAxios)
 Vue.component('pro-layout', ProLayout)
 Vue.component('page-container', PageHeaderWrapper)
 Vue.component('page-header-wrapper', PageHeaderWrapper)
+Vue.component('pagination', pagination)
 
 window.umi_plugin_ant_themeVar = themePluginConfig.theme
 

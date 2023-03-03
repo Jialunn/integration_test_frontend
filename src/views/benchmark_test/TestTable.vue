@@ -3,13 +3,13 @@
     <a-card :bordered="false">
       <a-row>
         <a-col :sm="8" :xs="24">
-          <info title="我的待办" value="8个任务" :bordered="true" />
+          <info title="任务数" value="8个任务" :bordered="true" />
         </a-col>
         <a-col :sm="8" :xs="24">
-          <info title="本周任务平均处理时间" value="32分钟" :bordered="true" />
+          <info title="成功率" value="32分钟" :bordered="true" />
         </a-col>
         <a-col :sm="8" :xs="24">
-          <info title="本周完成任务数" value="24个" />
+          <info title="执行率" value="24个" />
         </a-col>
       </a-row>
     </a-card>
@@ -26,7 +26,7 @@
       <!-- <div slot="extra">
         <a-input-search style="margin-left: 16px; width: 272px;" />
       </div> -->
-      <a-table rowKey="key" :columns="columns" :data-source="chartData" :pagination="false" :scroll="{ x: 1000 }">
+      <a-table rowKey="key" :columns="columns" :data-source="chartData" :pagination="false">
       </a-table>
       <pagination
         v-model="pagination.current"
@@ -85,7 +85,6 @@ const columns = [
   {
     title: '测试结果',
     dataIndex: 'results',
-    width: 400,
     key: 'results'
   }
 ]
