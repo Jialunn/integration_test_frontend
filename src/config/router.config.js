@@ -40,6 +40,12 @@ export const asyncRouterMap = [
         meta: { title: 'menu.benchmark_test', icon: 'table' },
         children: [
           {
+            path: '/benchmark_test/all-test-list',
+            name: 'BenchmarkAllTestList',
+            component: () => import('@/views/benchmark_test/TestTable'),
+            meta: { title: 'menu.list.all-test-list', keepAlive: true }
+          },
+          {
             path: '/benchmark_test/table-list',
             name: 'BenchmarkTableListWrapper',
             component: () => import('@/views/benchmark_test/TableList'),

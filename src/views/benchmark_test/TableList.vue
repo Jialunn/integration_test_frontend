@@ -1,28 +1,42 @@
 <template>
   <page-header-wrapper>
+
     <a-card :bordered="false">
+      <h1 style="font-size: 35px;font-weight: bolder;">mmdetection benchmark_mmdet_20230220</h1>
+    </a-card>
+
+    <a-card style="margin-top: 24px" :bordered="false">
       <a-row>
-        <a-col :sm="8" :xs="24">
-          <info title="我的待办" value="8个任务" :bordered="true" />
+        <a-col :sm="4" :xs="24">
+          <info title="总用例数" value="64" :bordered="true" />
         </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周任务平均处理时间" value="32分钟" :bordered="true" />
+        <a-col :sm="4" :xs="24">
+          <info title="执行用例数" value="32" :bordered="true" />
         </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周完成任务数" value="24个" />
+        <a-col :sm="4" :xs="24">
+          <info title="执行用例率" value="50%" :bordered="true" />
+        </a-col>
+        <a-col :sm="4" :xs="24">
+          <info title="成功用例数" value="24" :bordered="true" />
+        </a-col>
+        <a-col :sm="4" :xs="24">
+          <info title="用例成功率" value="66.7%" :bordered="true" />
+        </a-col>
+        <a-col :sm="4" :xs="24">
+          <info title="测试通过率" value="33.3%" />
         </a-col>
       </a-row>
     </a-card>
 
     <a-card style="margin-top: 24px" :bordered="false" title="历史数据">
 
-      <div slot="extra">
+      <!-- <div slot="extra">
         <a-radio-group v-model="status" @change="successFilter(status)">
           <a-radio-button value="all">全部</a-radio-button>
           <a-radio-button value="success">成功</a-radio-button>
           <a-radio-button value="fail">失败</a-radio-button>
         </a-radio-group>
-      </div>
+      </div> -->
       <!-- <div slot="extra">
         <a-input-search style="margin-left: 16px; width: 272px;" />
       </div> -->
@@ -58,7 +72,7 @@ const columns = [
     key: 'repo'
   },
   {
-    title: 'branch',
+    title: 'branch(tag)',
     dataIndex: 'branch',
     key: 'branch'
   },

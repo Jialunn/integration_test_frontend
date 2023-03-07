@@ -73,7 +73,7 @@ const columns = [
     key: 'repo'
   },
   {
-    title: 'branch',
+    title: 'branch(tag)',
     dataIndex: 'branch',
     key: 'branch'
   },
@@ -233,7 +233,7 @@ export default {
               const index = title.indexOf(name)
               metrics[index].push({
                 x: dateString + ';' + date.getHours() + ':' + date.getSeconds(),
-                y: d[i].results.metrics[key]
+                y: Number(d[i].results.metrics[key])
               })
             }
           })
