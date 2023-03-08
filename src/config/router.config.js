@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { bxAnaalyse } from '@/core/icons'
+// import { bxAnaalyse } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -13,24 +13,24 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: 'menu.home' },
-    redirect: '/dashboard/analysis',
+    redirect: '/benchmark_test/all-test-list',
     children: [
-      // dashboard
-      {
-        path: '/dashboard',
-        name: 'dashboard',
-        redirect: '/dashboard/analysis',
-        component: () => import('@/views/dashboard/Analysis'),
-        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse },
-        children: [
-          {
-            path: '/dashboard/analysis',
-            name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: 'menu.dashboard.analysis', keepAlive: false }
-          }
-        ]
-      },
+      // // dashboard
+      // {
+      //   path: '/dashboard',
+      //   name: 'dashboard',
+      //   redirect: '/dashboard/analysis',
+      //   component: () => import('@/views/dashboard/Analysis'),
+      //   meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse },
+      //   children: [
+      //     {
+      //       path: '/dashboard/analysis',
+      //       name: 'Analysis',
+      //       component: () => import('@/views/dashboard/Analysis'),
+      //       meta: { title: 'menu.dashboard.analysis', keepAlive: false }
+      //     }
+      //   ]
+      // },
       // benchmark_test
       {
         path: '/benchmark_test',

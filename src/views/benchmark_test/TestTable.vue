@@ -1,38 +1,26 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-      <a-row>
-        <a-col :sm="8" :xs="24">
-          <info title="任务数" value="8个任务" :bordered="true" />
-        </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="成功率" value="32分钟" :bordered="true" />
-        </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="执行率" value="24个" />
-        </a-col>
-      </a-row>
+      <h1 style="font-size: 35px;font-weight: bolder;">测试历史记录</h1>
     </a-card>
 
-    <a-card style="margin-top: 24px" :bordered="false" title="历史数据">
+    <a-card style="margin-top: 24px" :bordered="false">
 
       <div slot="extra">
-        <a-radio-group v-model="status" @change="successFilter(status)">
+        <a-radio-group v-model="status">
+          <!-- <a-radio-group v-model="status" @change="successFilter(status)"> -->
           <a-radio-button value="all">全部</a-radio-button>
-          <a-radio-button value="success">成功</a-radio-button>
-          <a-radio-button value="fail">失败</a-radio-button>
+          <a-radio-button value="test">测试</a-radio-button>
+          <a-radio-button value="train">训练</a-radio-button>
         </a-radio-group>
       </div>
-      <!-- <div slot="extra">
-        <a-input-search style="margin-left: 16px; width: 272px;" />
-      </div> -->
-      <a-table rowKey="key" :columns="columns" :data-source="chartData" :pagination="false">
+      <a-table rowKey="key" :columns="columns" :data-source="chartData" :pagination="false" :scroll="{x: 1200}">
       </a-table>
       <pagination
         v-model="pagination.current"
         @change="pageChange"
         @showSizeChange="pageSizeChange"
-        style="margin-top: 24px; align-content: center;;"
+        style="margin-top: 24px; align-content: center"
         size="small"
         :pageSize="pagination.pageSize"
         :pageSizeOptions="pagination.pageSizeOptions"
@@ -48,7 +36,7 @@
 // 演示如何使用 this.$dialog 封装 modal 组件
 import TaskForm from './modules/TaskForm'
 import Info from './components/Info'
-import { getListByRepoAndVersion } from '@/api/benchmarkTest'
+import { getTestList } from '@/api/benchmarkTest'
 import { Bar, STable } from '@/components'
 
 const columns = [
@@ -58,35 +46,55 @@ const columns = [
     key: 'repo'
   },
   {
-    title: 'branch',
+    title: 'branch(tag)',
     dataIndex: 'branch',
     key: 'branch'
   },
   {
-    title: 'case',
-    dataIndex: 'case',
-    key: 'case'
+    title: '总用例数',
+    dataIndex: 'cases_count',
+    key: 'cases_count'
+  },
+  {
+    title: '测试用例数',
+    dataIndex: 'cases_test',
+    key: 'cases_test'
+  },
+  {
+    title: '成功用例数',
+    dataIndex: 'cases_success',
+    key: 'cases_success'
+  },
+  {
+    title: '集群编号',
+    dataIndex: 'cluster_num',
+    key: 'cluster_num'
+  },
+  {
+    title: '测试分区名',
+    dataIndex: 'partition',
+    key: 'partition'
+  },
+  {
+    title: '测试类型',
+    dataIndex: 'task_type',
+    key: 'task_type'
   },
   {
     title: '测试版本',
     dataIndex: 'test_version',
     key: 'test_version'
-  },
-  {
-    title: '测试时间',
-    dataIndex: 'test_started_time',
-    key: 'test_started_time'
-  },
-  {
-    title: '测试状态',
-    dataIndex: 'success',
-    key: 'success'
-  },
-  {
-    title: '测试结果',
-    dataIndex: 'results',
-    key: 'results'
   }
+  // {
+  //   title: '测试开始时间',
+  //   dataIndex: 'start_time',
+  //   key: 'start_time'
+  // },
+  // {
+  //   title: '测试结束时间',
+  //   dataIndex: 'end_time',
+  //   key: 'end_time'
+  // }
 ]
 
 export default {
@@ -109,12 +117,6 @@ export default {
       },
       success: undefined,
       chartData: [],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: () => {
-        return new Promise((resolve) => {
-          resolve(this.res)
-        })
-      },
       status: 'all'
     }
   },
@@ -122,16 +124,13 @@ export default {
     this.loadChartData()
   },
   methods: {
-    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = 'test', repo = 'mmdetection', version = 'benchmark_mmdet_20230220') {
+    loadChartData (page_size = this.pagination.pageSize, page = this.pagination.current, test_type = undefined) {
       const modelData = {
         'test_type': test_type,
         'page_size': page_size,
-        'page': page,
-        'repo': repo,
-        'version': version,
-        'success': success
+        'page': page
       }
-      getListByRepoAndVersion(modelData)
+      getTestList(modelData)
         .then((res) => {
           // eslint-disable-next-line
           let metrics = []

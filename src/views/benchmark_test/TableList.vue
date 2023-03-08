@@ -30,23 +30,20 @@
 
     <a-card style="margin-top: 24px" :bordered="false" title="历史数据">
 
-      <!-- <div slot="extra">
+      <div slot="extra">
         <a-radio-group v-model="status" @change="successFilter(status)">
           <a-radio-button value="all">全部</a-radio-button>
           <a-radio-button value="success">成功</a-radio-button>
           <a-radio-button value="fail">失败</a-radio-button>
         </a-radio-group>
-      </div> -->
-      <!-- <div slot="extra">
-        <a-input-search style="margin-left: 16px; width: 272px;" />
-      </div> -->
+      </div>
       <a-table rowKey="key" :columns="columns" :data-source="chartData" :pagination="false" :scroll="{ x: 1000 }">
       </a-table>
       <pagination
         v-model="pagination.current"
         @change="pageChange"
         @showSizeChange="pageSizeChange"
-        style="margin-top: 24px; align-content: center;;"
+        style="margin-top: 24px; align-content: center"
         size="small"
         :pageSize="pagination.pageSize"
         :pageSizeOptions="pagination.pageSizeOptions"
@@ -124,12 +121,6 @@ export default {
       },
       success: undefined,
       chartData: [],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: () => {
-        return new Promise((resolve) => {
-          resolve(this.res)
-        })
-      },
       status: 'all'
     }
   },

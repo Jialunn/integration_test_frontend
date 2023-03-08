@@ -2,7 +2,8 @@ import request from '@/utils/request'
 
 const benchmarkTestApi = {
     get_model_history: '/benchmark_test/get_model_history',
-    list_by_repo_and_version: '/benchmark_test/list_by_repo_and_version'
+    list_by_repo_and_version: '/benchmark_test/list_by_repo_and_version',
+    get_test_list: '/benchmark_test/list_group'
 }
 
 /**
@@ -27,6 +28,14 @@ export function getModelHistory (parameter) {
 export function getListByRepoAndVersion (parameter) {
     return request({
         url: benchmarkTestApi.list_by_repo_and_version,
+        method: 'post',
+        data: parameter
+    })
+}
+
+export function getTestList (parameter) {
+    return request({
+        url: benchmarkTestApi.get_test_list,
         method: 'post',
         data: parameter
     })

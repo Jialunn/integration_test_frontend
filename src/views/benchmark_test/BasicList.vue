@@ -1,19 +1,5 @@
 <template>
   <page-header-wrapper>
-    <!-- <a-card :bordered="false">
-      <a-row>
-        <a-col :sm="8" :xs="24">
-          <info title="我的待办" value="8个任务" :bordered="true" />
-        </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周任务平均处理时间" value="32分钟" :bordered="true" />
-        </a-col>
-        <a-col :sm="8" :xs="24">
-          <info title="本周完成任务数" value="24个" />
-        </a-col>
-      </a-row>
-    </a-card> -->
-
     <div v-for="(title, index) in barTitle" :key="index">
       <a-card style="margin-top: 24px" :bordered="false">
         <bar :data="metrics[index]" :title="title" />
@@ -32,9 +18,6 @@
           <a-radio-button value="fail">失败</a-radio-button>
         </a-radio-group>
       </div>
-      <!-- <div slot="extra">
-        <a-input-search style="margin-left: 16px; width: 272px;" />
-      </div> -->
       <a-table
         rowKey="key"
         :columns="columns"
@@ -47,7 +30,7 @@
         v-model="pagination.current"
         @change="pageChange"
         @showSizeChange="pageSizeChange"
-        style="margin-top: 24px; align-content: center;;"
+        style="margin-top: 24px; align-content: center"
         size="small"
         :pageSize="pagination.pageSize"
         :pageSizeOptions="pagination.pageSizeOptions"
@@ -126,12 +109,6 @@ export default {
       success: undefined,
       barTitle: [],
       chartData: [],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: () => {
-        return new Promise((resolve) => {
-          resolve(this.res)
-        })
-      },
       metrics: [],
       status: 'all'
     }
