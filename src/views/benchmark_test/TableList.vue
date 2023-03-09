@@ -38,6 +38,15 @@
         </a-radio-group>
       </div>
       <a-table rowKey="key" :columns="columns" :data-source="chartData" :pagination="false" :scroll="{ x: 1000 }">
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <a @click="onModelDetail(record)">详情</a>
+            <!-- <a-divider type="vertical" />
+            <a @click="onItemClick(record)">修改</a>
+            <a-divider type="vertical" />
+            <a @click="onItemClick(record)">删除</a> -->
+          </template>
+        </span>
       </a-table>
       <pagination
         v-model="pagination.current"
@@ -98,6 +107,12 @@ const columns = [
     dataIndex: 'results',
     width: 400,
     key: 'results'
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    width: '150px',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 
@@ -121,14 +136,22 @@ export default {
       },
       success: undefined,
       chartData: [],
-      status: 'all'
+      status: 'all',
+      repo: 'mmdetection',
+      version: 'benchmark_mmdet_20230220'
     }
   },
   created () {
+    if (String(this.$route.params.repo) !== 'undefined') {
+      this.repo = this.$route.params.repo
+    }
+    if (String(this.$route.params.version) !== 'undefined') {
+      this.version = this.$route.params.version
+    }
     this.loadChartData()
   },
   methods: {
-    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = 'test', repo = 'mmdetection', version = 'benchmark_mmdet_20230220') {
+    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = 'test', repo = this.repo, version = this.version) {
       const modelData = {
         'test_type': test_type,
         'page_size': page_size,
@@ -184,7 +207,15 @@ export default {
       }
       this.pagination.current = 1
       this.loadChartData()
-    }
+    },
+    onModelDetail (e) {
+      const repo = e.repo
+      const model = e['case']
+      this.$router.push('/benchmark_test/model-test-list/' + repo + '/' + model)
+    },
+    onResultChange (e) {},
+    onResultUpdate (e) {},
+    onResultDetele (e) {}
   }
 }
 </script>

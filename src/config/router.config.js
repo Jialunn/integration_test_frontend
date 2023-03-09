@@ -36,7 +36,8 @@ export const asyncRouterMap = [
         path: '/benchmark_test',
         name: 'benchmark_test',
         component: RouteView,
-        redirect: '/benchmark_test/table-list',
+        redirect: '/benchmark_test/all-test-list',
+        hideChildrenInMenu: true,
         meta: { title: 'menu.benchmark_test', icon: 'table' },
         children: [
           {
@@ -46,14 +47,20 @@ export const asyncRouterMap = [
             meta: { title: 'menu.list.all-test-list', keepAlive: true }
           },
           {
-            path: '/benchmark_test/table-list',
+            path: '/benchmark_test/table-list/:repo?/:version?/:pageNo([1-9]\\d*)?',
             name: 'BenchmarkTableListWrapper',
             component: () => import('@/views/benchmark_test/TableList'),
             meta: { title: 'menu.list.table-list', keepAlive: true }
           },
+          // {
+          //   path: '/benchmark_test/model-test-list',
+          //   name: 'ModelTestList',
+          //   component: () => import('@/views/benchmark_test/BasicList'),
+          //   meta: { title: 'menu.list.basic-list', keepAlive: true }
+          // },
           {
-            path: '/benchmark_test/model-test-list',
-            name: 'ModelTestList',
+            path: '/benchmark_test/model-test-list/:repo?/:model?/:pageNo([1-9]\\d*)?',
+            name: 'ModelTestList_page',
             component: () => import('@/views/benchmark_test/BasicList'),
             meta: { title: 'menu.list.basic-list', keepAlive: true }
           },

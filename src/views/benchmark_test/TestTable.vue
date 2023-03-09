@@ -7,14 +7,26 @@
     <a-card style="margin-top: 24px" :bordered="false">
 
       <div slot="extra">
-        <a-radio-group v-model="status">
-          <!-- <a-radio-group v-model="status" @change="successFilter(status)"> -->
+        <a-radio-group v-model="status" @change="successFilter(status)">
           <a-radio-button value="all">全部</a-radio-button>
           <a-radio-button value="test">测试</a-radio-button>
           <a-radio-button value="train">训练</a-radio-button>
         </a-radio-group>
       </div>
-      <a-table rowKey="key" :columns="columns" :data-source="chartData" :pagination="false" :scroll="{x: 1200}">
+      <a-table
+        rowKey="key"
+        onRow="onItemClick"
+        :columns="columns"
+        :data-source="chartData"
+        :pagination="false"
+        :scroll="{x: 1100}">
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <a @click="onItemClick(record)">详情</a>
+            <a-divider type="vertical" />
+            <a @click="onItemClick(record)">导出</a>
+          </template>
+        </span>
       </a-table>
       <pagination
         v-model="pagination.current"
@@ -65,16 +77,16 @@ const columns = [
     dataIndex: 'cases_success',
     key: 'cases_success'
   },
-  {
-    title: '集群编号',
-    dataIndex: 'cluster_num',
-    key: 'cluster_num'
-  },
-  {
-    title: '测试分区名',
-    dataIndex: 'partition',
-    key: 'partition'
-  },
+  // {
+  //   title: '集群编号',
+  //   dataIndex: 'cluster_num',
+  //   key: 'cluster_num'
+  // },
+  // {
+  //   title: '测试分区名',
+  //   dataIndex: 'partition',
+  //   key: 'partition'
+  // },
   {
     title: '测试类型',
     dataIndex: 'task_type',
@@ -83,7 +95,14 @@ const columns = [
   {
     title: '测试版本',
     dataIndex: 'test_version',
-    key: 'test_version'
+    key: 'test_version',
+    width: 250
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    width: '150px',
+    scopedSlots: { customRender: 'action' }
   }
   // {
   //   title: '测试开始时间',
@@ -95,6 +114,7 @@ const columns = [
   //   dataIndex: 'end_time',
   //   key: 'end_time'
   // }
+
 ]
 
 export default {
@@ -115,7 +135,7 @@ export default {
         total: 20,
         pageSizeOptions: ['5', '10', '20']
       },
-      success: undefined,
+      mode: undefined,
       chartData: [],
       status: 'all'
     }
@@ -124,7 +144,7 @@ export default {
     this.loadChartData()
   },
   methods: {
-    loadChartData (page_size = this.pagination.pageSize, page = this.pagination.current, test_type = undefined) {
+    loadChartData (test_type = undefined, page_size = this.pagination.pageSize, page = this.pagination.current) {
       const modelData = {
         'test_type': test_type,
         'page_size': page_size,
@@ -167,16 +187,21 @@ export default {
     },
     successFilter (e) {
       if (e === 'all') {
-        this.success = undefined
+        this.mode = undefined
       }
-      if (e === 'success') {
-        this.success = true
+      if (e === 'test') {
+        this.mode = 'test'
       }
-      if (e === 'fail') {
-        this.success = false
+      if (e === 'train') {
+        this.mode = 'train'
       }
       this.pagination.current = 1
-      this.loadChartData()
+      this.loadChartData(this.mode)
+    },
+    onItemClick (e) {
+      const repo = e.repo
+      const version = e.test_version
+      this.$router.push('/benchmark_test/table-list/' + repo + '/' + version)
     }
   }
 }

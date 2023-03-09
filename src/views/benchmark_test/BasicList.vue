@@ -25,6 +25,13 @@
         :pagination="false"
         :scroll="{ x: 1000 }"
       >
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <a @click="onItemUpdate(record)">修改</a>
+            <a-divider type="vertical" />
+            <a @click="onItemDelete(record)">删除</a>
+          </template>
+        </span>
       </a-table>
       <pagination
         v-model="pagination.current"
@@ -85,6 +92,12 @@ const columns = [
     dataIndex: 'results',
     width: 400,
     key: 'results'
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    width: '150px',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 
@@ -110,71 +123,28 @@ export default {
       barTitle: [],
       chartData: [],
       metrics: [],
-      status: 'all'
+      status: 'all',
+      repo: 'mmdetection',
+      config: 'atss_r50_fpn_1x_coco'
     }
   },
   created () {
+    if (String(this.$route.params.repo) !== 'undefined') {
+      this.repo = this.$route.params.repo
+    }
+    if (String(this.$route.params.model) !== 'undefined') {
+      this.model = this.$route.params.model
+    }
     this.loadChartData()
   },
   methods: {
-    add () {
-      this.$dialog(TaskForm,
-        // component props
-        {
-          record: {},
-          on: {
-            ok () {
-              console.log('ok 回调')
-            },
-            cancel () {
-              console.log('cancel 回调')
-            },
-            close () {
-              console.log('modal close 回调')
-            }
-          }
-        },
-        // modal props
-        {
-          title: '新增',
-          width: 700,
-          centered: true,
-          maskClosable: false
-        })
-    },
-    edit (record) {
-      console.log('record', record)
-      this.$dialog(TaskForm,
-        // component props
-        {
-          record,
-          on: {
-            ok () {
-              console.log('ok 回调')
-            },
-            cancel () {
-              console.log('cancel 回调')
-            },
-            close () {
-              console.log('modal close 回调')
-            }
-          }
-        },
-        // modal props
-        {
-          title: '操作',
-          width: 700,
-          centered: true,
-          maskClosable: false
-        })
-    },
-    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = 'test', repo = 'mmdetection', config = 'configs/atss/atss_r50_fpn_1x_coco.py') {
+    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = 'test', repo = this.repo, model = this.model) {
       const modelData = {
         'test_type': test_type,
         'page_size': page_size,
         'page': page,
         'repo': repo,
-        'config': config,
+        'model': model,
         'success': success
       }
       getModelHistory(modelData)
@@ -220,7 +190,6 @@ export default {
           d[i].key = i
           chartData.push(d[i])
         }
-        console.log(metrics)
         this.barTitle = title
         this.metrics = metrics
         this.chartData = chartData
@@ -250,6 +219,12 @@ export default {
       }
       this.pagination.current = 1
       this.loadChartData()
+    },
+    onItemUpdate (e) {
+      console.log(e)
+    },
+    onItemDelete (e) {
+      console.log(e)
     }
   }
 }
