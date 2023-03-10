@@ -1,6 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-// import { bxAnaalyse } from '@/core/icons'
+import { BasicLayout } from '@/layouts'
 
 const RouteView = {
   name: 'RouteView',
@@ -15,23 +14,6 @@ export const asyncRouterMap = [
     meta: { title: 'menu.home' },
     redirect: '/benchmark_test/all-test-list',
     children: [
-      // // dashboard
-      // {
-      //   path: '/dashboard',
-      //   name: 'dashboard',
-      //   redirect: '/dashboard/analysis',
-      //   component: () => import('@/views/dashboard/Analysis'),
-      //   meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse },
-      //   children: [
-      //     {
-      //       path: '/dashboard/analysis',
-      //       name: 'Analysis',
-      //       component: () => import('@/views/dashboard/Analysis'),
-      //       meta: { title: 'menu.dashboard.analysis', keepAlive: false }
-      //     }
-      //   ]
-      // },
-      // benchmark_test
       {
         path: '/benchmark_test',
         name: 'benchmark_test',
@@ -41,25 +23,19 @@ export const asyncRouterMap = [
         meta: { title: 'menu.benchmark_test', icon: 'table' },
         children: [
           {
-            path: '/benchmark_test/all-test-list',
+            path: '/benchmark_test/all-test-list/:pageSi([1-9]\\d*)?/:pageNo([1-9]\\d*)?',
             name: 'BenchmarkAllTestList',
             component: () => import('@/views/benchmark_test/TestTable'),
             meta: { title: 'menu.list.all-test-list', keepAlive: true }
           },
           {
-            path: '/benchmark_test/table-list/:repo?/:version?/:pageNo([1-9]\\d*)?',
+            path: '/benchmark_test/table-list/:test_type?/:repo?/:version?/:pageSi([1-9]\\d*)?/:pageNo([1-9]\\d*)?',
             name: 'BenchmarkTableListWrapper',
             component: () => import('@/views/benchmark_test/TableList'),
             meta: { title: 'menu.list.table-list', keepAlive: true }
           },
-          // {
-          //   path: '/benchmark_test/model-test-list',
-          //   name: 'ModelTestList',
-          //   component: () => import('@/views/benchmark_test/BasicList'),
-          //   meta: { title: 'menu.list.basic-list', keepAlive: true }
-          // },
           {
-            path: '/benchmark_test/model-test-list/:repo?/:model?/:pageNo([1-9]\\d*)?',
+            path: '/benchmark_test/model-test-list/:test_type?/:repo?/:model?/:pageSi([1-9]\\d*)?/:pageNo([1-9]\\d*)?',
             name: 'ModelTestList_page',
             component: () => import('@/views/benchmark_test/BasicList'),
             meta: { title: 'menu.list.basic-list', keepAlive: true }

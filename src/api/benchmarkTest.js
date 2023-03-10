@@ -2,8 +2,11 @@ import request from '@/utils/request'
 
 const benchmarkTestApi = {
     get_model_history: '/benchmark_test/get_model_history',
+    get_test_history: '/benchmark_test/get_group',
     list_by_repo_and_version: '/benchmark_test/list_by_repo_and_version',
-    get_test_list: '/benchmark_test/list_group'
+    get_test_list: '/benchmark_test/list_group',
+    update_item_by_id: '/benchmark_test/update_item_by_id',
+    delete_item_by_id: '/benchmark_test/delete_item_by_id'
 }
 
 /**
@@ -25,6 +28,14 @@ export function getModelHistory (parameter) {
     })
 }
 
+export function getTestHistory (parameter) {
+    return request({
+        url: benchmarkTestApi.get_test_history,
+        method: 'post',
+        data: parameter
+    })
+}
+
 export function getListByRepoAndVersion (parameter) {
     return request({
         url: benchmarkTestApi.list_by_repo_and_version,
@@ -36,6 +47,22 @@ export function getListByRepoAndVersion (parameter) {
 export function getTestList (parameter) {
     return request({
         url: benchmarkTestApi.get_test_list,
+        method: 'post',
+        data: parameter
+    })
+}
+
+export function updateItemById (parameter) {
+    return request({
+        url: benchmarkTestApi.update_item_by_id,
+        method: 'post',
+        data: parameter
+    })
+}
+
+export function deleteItemById (parameter) {
+    return request({
+        url: benchmarkTestApi.delete_item_by_id,
         method: 'post',
         data: parameter
     })

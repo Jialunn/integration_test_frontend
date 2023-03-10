@@ -135,12 +135,19 @@ export default {
         total: 20,
         pageSizeOptions: ['5', '10', '20']
       },
+      res: {},
       mode: undefined,
       chartData: [],
       status: 'all'
     }
   },
   created () {
+    if (String(this.$route.params.pageSi) !== 'undefined') {
+      this.pagination.pageSize = this.$route.params.pageSi
+    }
+    if (String(this.$route.params.pageNo) !== 'undefined') {
+      this.pagination.current = this.$route.params.pageNo
+    }
     this.loadChartData()
   },
   methods: {
@@ -152,11 +159,10 @@ export default {
       }
       getTestList(modelData)
         .then((res) => {
-          // eslint-disable-next-line
-          let metrics = []
+          this.res = res
           // eslint-disable-next-line
           let chartData = []
-          const d = res.data
+          const d = JSON.parse(JSON.stringify(res.data))
           for (const i in d) {
             d[i].success = JSON.stringify(d[i].success)
             const date = new Date(d[i].test_started_time * 1000)
@@ -169,7 +175,6 @@ export default {
             d[i].key = i
             chartData.push(d[i])
           }
-          this.metrics = metrics
           this.chartData = chartData
           this.pagination.total = res.pageNum
           // this.pagenation.total = Math.ceil(res.pageNum / res.pageSize)
@@ -199,9 +204,11 @@ export default {
       this.loadChartData(this.mode)
     },
     onItemClick (e) {
+      console.log(e)
       const repo = e.repo
       const version = e.test_version
-      this.$router.push('/benchmark_test/table-list/' + repo + '/' + version)
+      const testType = e.task_type
+      this.$router.push('/benchmark_test/table-list/' + testType + '/' + repo + '/' + version)
     }
   }
 }

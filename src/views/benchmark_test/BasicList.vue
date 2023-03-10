@@ -120,6 +120,8 @@ export default {
         pageSizeOptions: ['5', '10', '20']
       },
       success: undefined,
+      test_type: 'test',
+      res: {},
       barTitle: [],
       chartData: [],
       metrics: [],
@@ -135,10 +137,16 @@ export default {
     if (String(this.$route.params.model) !== 'undefined') {
       this.model = this.$route.params.model
     }
+    if (String(this.$route.params.pageNo) !== 'undefined') {
+      this.current = this.$route.params.pageNo
+    }
+    if (String(this.$route.params.test_type) !== 'undefined') {
+      this.test_type = this.$route.params.test_type
+    }
     this.loadChartData()
   },
   methods: {
-    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = 'test', repo = this.repo, model = this.model) {
+    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = this.test_type, repo = this.repo, model = this.model) {
       const modelData = {
         'test_type': test_type,
         'page_size': page_size,
@@ -149,6 +157,7 @@ export default {
       }
       getModelHistory(modelData)
       .then((res) => {
+        this.res = res
         let head = ''
         // eslint-disable-next-line
         let title = []
@@ -156,7 +165,7 @@ export default {
         let metrics = []
         // eslint-disable-next-line
         let chartData = []
-        const d = res.data
+        const d = JSON.parse(JSON.stringify(res.data))
         for (const i in d) {
           d[i].success = JSON.stringify(d[i].success)
           const date = new Date(d[i].test_started_time * 1000)
@@ -224,7 +233,16 @@ export default {
       console.log(e)
     },
     onItemDelete (e) {
-      console.log(e)
+      console.log(this.res.data[0].results.dataset)
+      const id = e._id
+      const dataList = this.res.data
+      for (const j in dataList) {
+        if (dataList[j]._id === id) {
+          // deleteItemById
+          console.log(1)
+        }
+      }
+      this.loadChartData()
     }
   }
 }

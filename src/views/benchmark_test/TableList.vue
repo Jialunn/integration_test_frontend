@@ -8,22 +8,22 @@
     <a-card style="margin-top: 24px" :bordered="false">
       <a-row>
         <a-col :sm="4" :xs="24">
-          <info title="总用例数" value="64" :bordered="true" />
+          <info title="总用例数" v-model="all_case" :bordered="true" />
         </a-col>
         <a-col :sm="4" :xs="24">
-          <info title="执行用例数" value="32" :bordered="true" />
+          <info title="执行用例数" v-model="processed" :bordered="true" />
         </a-col>
         <a-col :sm="4" :xs="24">
-          <info title="执行用例率" value="50%" :bordered="true" />
+          <info title="成功用例数" v-model="successed" :bordered="true" />
         </a-col>
         <a-col :sm="4" :xs="24">
-          <info title="成功用例数" value="24" :bordered="true" />
+          <info title="执行用例率" v-model="processed_rate" :bordered="true" />
         </a-col>
         <a-col :sm="4" :xs="24">
-          <info title="用例成功率" value="66.7%" :bordered="true" />
+          <info title="用例成功率" v-model="successed_rate" :bordered="true" />
         </a-col>
         <a-col :sm="4" :xs="24">
-          <info title="测试通过率" value="33.3%" />
+          <info title="测试通过率" v-model="test_pass_rate" />
         </a-col>
       </a-row>
     </a-card>
@@ -68,7 +68,7 @@
 // 演示如何使用 this.$dialog 封装 modal 组件
 import TaskForm from './modules/TaskForm'
 import Info from './components/Info'
-import { getListByRepoAndVersion } from '@/api/benchmarkTest'
+import { getListByRepoAndVersion, getTestHistory } from '@/api/benchmarkTest'
 import { Bar, STable } from '@/components'
 
 const columns = [
@@ -134,11 +134,19 @@ export default {
         total: 20,
         pageSizeOptions: ['5', '10', '20']
       },
+      res: {},
+      test_type: 'test',
       success: undefined,
       chartData: [],
       status: 'all',
       repo: 'mmdetection',
-      version: 'benchmark_mmdet_20230220'
+      version: 'benchmark_mmdet_20230220',
+      all_case: '1',
+      processed: '1',
+      successed: '1',
+      processed_rate: '100%',
+      successed_rate: '100%',
+      test_pass_rate: '100%'
     }
   },
   created () {
@@ -148,10 +156,19 @@ export default {
     if (String(this.$route.params.version) !== 'undefined') {
       this.version = this.$route.params.version
     }
+    if (String(this.$route.params.pageSi) !== 'undefined') {
+      this.pagination.pageSize = this.$route.params.pageSi
+    }
+    if (String(this.$route.params.pageNo) !== 'undefined') {
+      this.pagination.current = this.$route.params.pageNo
+    }
+    if (String(this.$route.params.test_type) !== 'undefined') {
+      this.test_type = this.$route.params.test_type
+    }
     this.loadChartData()
   },
   methods: {
-    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = 'test', repo = this.repo, version = this.version) {
+    loadChartData (success = this.success, page_size = this.pagination.pageSize, page = this.pagination.current, test_type = this.test_type, repo = this.repo, version = this.version) {
       const modelData = {
         'test_type': test_type,
         'page_size': page_size,
@@ -162,11 +179,10 @@ export default {
       }
       getListByRepoAndVersion(modelData)
         .then((res) => {
-          // eslint-disable-next-line
-          let metrics = []
+          this.res = res
           // eslint-disable-next-line
           let chartData = []
-          const d = res.data
+          const d = JSON.parse(JSON.stringify(res.data))
           for (const i in d) {
             d[i].success = JSON.stringify(d[i].success)
             const date = new Date(d[i].test_started_time * 1000)
@@ -179,7 +195,6 @@ export default {
             d[i].key = i
             chartData.push(d[i])
           }
-          this.metrics = metrics
           this.chartData = chartData
           this.pagination.total = res.pageNum
           // this.pagenation.total = Math.ceil(res.pageNum / res.pageSize)
@@ -187,6 +202,22 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+      setTimeout(() => {
+        const testInfo = {
+          'repo': repo,
+          'version': version,
+          'test_type': test_type
+        }
+        getTestHistory(testInfo).then((res) => {
+          const d = res.data[0]
+          this.all_case = d.cases_count
+          this.processed = d.cases_test
+          this.successed = d.cases_success
+          this.processed_rate = String(Math.floor(100 * (this.processed / this.all_case))) + '%'
+          this.successed_rate = String(Math.floor(100 * (this.successed / this.processed))) + '%'
+          this.test_pass_rate = String(Math.floor(100 * (this.successed / this.all_case))) + '%'
+        })
+      }, 100)
     },
     pageChange (page, pageSize) {
       this.loadChartData()
@@ -211,7 +242,7 @@ export default {
     onModelDetail (e) {
       const repo = e.repo
       const model = e['case']
-      this.$router.push('/benchmark_test/model-test-list/' + repo + '/' + model)
+      this.$router.push('/benchmark_test/model-test-list/' + this.test_type + '/' + repo + '/' + model)
     },
     onResultChange (e) {},
     onResultUpdate (e) {},
